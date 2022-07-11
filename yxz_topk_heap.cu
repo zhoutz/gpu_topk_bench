@@ -19,6 +19,7 @@
 #define GPU_THREADS 128
 #endif
 
+namespace {
 // cuda error
 void handleCudaError(cudaError_t err, const char* file, int line) {
   if (err != cudaSuccess) {
@@ -121,9 +122,6 @@ __global__ void top_k_gpu_kernel3_1_orig(DATATYPE* input, int length, int k,
   DATATYPE* myPoint = input + threadId * k;
   int i;
 
-  // for (int index = 0; index < k; index++) {
-  //   replace_smaller(myPoint, index + 1, myPoint[index]);
-  // }
   make_heap(myPoint, myPoint + k, thrust::greater<DATATYPE>());
 
   // replace the data if bigger
@@ -177,9 +175,10 @@ __global__ void top_k_gpu_kernel3_2_orig(DATATYPE* input, int num, int stride,
     }
   }
 }
+}  // namespace
 
-void yxz_topk(DATATYPE* input, int length, int k, DATATYPE* output,
-              cudaStream_t stream = 0) {
+void yxz_topk_heap(DATATYPE* input, int length, int k, DATATYPE* output,
+                   cudaStream_t stream = 0) {
   // each thread at least 2K
   int blocks_opt, thread_opt;
   if (k < 20) {

@@ -15,6 +15,7 @@
 #define GPU_THREADS 128
 #endif
 
+namespace {
 // cuda error
 void handleCudaError(cudaError_t err, const char* file, int line) {
   if (err != cudaSuccess) {
@@ -176,6 +177,7 @@ __global__ void top_k_gpu_kernel3_2_orig(DATATYPE* input, int num, int stride,
     }
   }
 }
+}  // namespace
 
 void yxz_topk(DATATYPE* input, int length, int k, DATATYPE* output,
               cudaStream_t stream = 0) {
