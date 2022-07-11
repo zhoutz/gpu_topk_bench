@@ -4,3 +4,6 @@
 [submodule "others/yxz_topk"]
 	path = others/yxz_topk
 	url = https://github.com/yuxianzhi/Top-K.git
+[submodule "others/anil_topk"]
+	path = others/anil_topk
+	url = https://github.com/anilshanbhag/gpu-topk
