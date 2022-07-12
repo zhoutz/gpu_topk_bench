@@ -13,7 +13,7 @@
 
 #include "topk.cuh"
 
-constexpr int N = 1e6;
+constexpr int N = 2e7;
 
 struct GPU_RNG {
   thrust::random::taus88 rng;
