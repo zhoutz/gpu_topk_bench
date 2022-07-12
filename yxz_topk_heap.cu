@@ -1,5 +1,6 @@
 #include <thrust/functional.h>
 
+namespace {
 #include "sift_down.cu"
 
 // data type
@@ -12,21 +13,20 @@
 #define USE_GPU
 
 #ifdef USE_GPU
-#define HANDLE_CUDA_ERROR(err) (handleCudaError(err, __FILE__, __LINE__))
+// #define HANDLE_CUDA_ERROR(err) (handleCudaError(err, __FILE__, __LINE__))
 #define GPU_BLOCKS_THRESHOLD 2048
 #define GPU_THREADS_THRESHOLD 1024
 #define GPU_SHARED_MEM_THRESHOLD 48 * 1024
 #define GPU_THREADS 128
 #endif
 
-namespace {
 // cuda error
-void handleCudaError(cudaError_t err, const char* file, int line) {
-  if (err != cudaSuccess) {
-    printf("%s in %s at line %d\n", cudaGetErrorString(err), file, line);
-    exit(2);
-  }
-}
+// void handleCudaError(cudaError_t err, const char* file, int line) {
+//   if (err != cudaSuccess) {
+//     printf("%s in %s at line %d\n", cudaGetErrorString(err), file, line);
+//     exit(2);
+//   }
+// }
 
 __device__ inline void replace_smaller(DATATYPE* array, int k, DATATYPE data) {
   if (array[0] < data) {
@@ -213,6 +213,6 @@ void yxz_topk_heap(DATATYPE* input, int length, int k, DATATYPE* output,
   else
     top_k_gpu_kernel3_2_orig<<<1, threads, 0, stream>>>(input, blocks, stride,
                                                         k, output);
-  cudaError_t err = cudaGetLastError();
-  HANDLE_CUDA_ERROR(err);
+  // cudaError_t err = cudaGetLastError();
+  // HANDLE_CUDA_ERROR(err);
 }

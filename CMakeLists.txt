@@ -8,7 +8,7 @@ project(CudaTopKBench CUDA)
 
 add_subdirectory(nvbench)
 
-add_executable(main_bench main_bench.cu yxz_topk.cu yxz_topk_heap.cu)
+add_executable(main_bench main_bench.cu topk.cuh yxz_topk.cu yxz_topk_heap.cu anil_bitonic_topk.cu)
 target_link_libraries(main_bench nvbench::main)
 target_compile_options(main_bench PUBLIC
     $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda --expt-relaxed-constexpr>) 
