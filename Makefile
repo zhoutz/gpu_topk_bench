@@ -17,7 +17,7 @@ run:build
 
 .PHONY: clean
 clean:
-	rm -rf build test
+	-rm -rf build test
 
 .PHONY: test
 test:

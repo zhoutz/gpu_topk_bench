@@ -1,3 +1,4 @@
+#include <curand.h>
 #include <thrust/copy.h>
 #include <thrust/device_vector.h>
 #include <thrust/execution_policy.h>
@@ -16,14 +17,17 @@
 constexpr int N = 2e7;
 
 struct GPU_RNG {
-  thrust::random::taus88 rng;
-  thrust::random::uniform_real_distribution<float> dist;
-  GPU_RNG() : rng(std::random_device{}()), dist(0.f, 1.f) {}
-  __device__ float operator()() { return dist(rng); }
+  curandGenerator_t gen;
+  GPU_RNG() {
+    curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT);
+    curandSetPseudoRandomGeneratorSeed(gen, 1234);
+  }
+  ~GPU_RNG() { curandDestroyGenerator(gen); }
+  void operator()(float *p, int num) { curandGenerateUniform(gen, p, num); }
 } rng;
 
 void generate_random_device_vector(thrust::device_vector<float> &v) {
-  thrust::generate(thrust::device, v.begin(), v.end(), rng);
+  rng(thrust::raw_pointer_cast(v.data()), v.size());
 }
 
 struct TopK_Benchmark {
@@ -50,6 +54,7 @@ struct TopK_Benchmark {
       for (int i = 0; i < k; i++) {
         if (result[i] != src_vec[i]) {
           printf("i = %d: %f != %f\n", i, float(result[i]), float(src_vec[i]));
+          exit(1);
         }
       }
 #endif
@@ -85,6 +90,7 @@ struct TopK_Benchmark_WithBuffer {
       for (int i = 0; i < k; i++) {
         if (result[i] != src_vec[i]) {
           printf("i = %d: %f != %f\n", i, float(result[i]), float(src_vec[i]));
+          exit(1);
         }
       }
 #endif
